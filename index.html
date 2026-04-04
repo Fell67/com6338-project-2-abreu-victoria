@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiba's Kingdom 🏰</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header>
+        <h1>Kiba's Kingdom 🏰</h1>
+    </header>
+    <main>
+        <article>
+            <section class="section-text_center">
+                <h2>Status of the Kingdom</h2>
+                <span>Households Conquered: <span id="numberOfHouseholdsAdded">0</span></span>
+                <span>Households Lost: <span id="numberofRejections">0</span></span>
+                <hr />
+            </section>
+            <section>
+                <h2>Status of the Current Household</h2>
+                <section>Current Household: <ul id="currentHousehold"></ul></section>
+            </section>
+            <section id="game"></section>
+        </article>
+    </main>
+    <footer>
+        &copy; Kiba's Kingdom 🏰 <span id="year"></span>
+    </footer>
+    <script type="module" src="./index.js">
+        document.getElementById('year').textContent = new Date().getFullYear()
+    </script>
+</body>
