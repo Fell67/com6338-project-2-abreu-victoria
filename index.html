@@ -21,7 +21,8 @@
             </section>
             <section>
                 <h2>Status of the Current Household</h2>
-                <section>Current Household: <ul id="currentHousehold"></ul></section>
+                <section>Current Household: <ul id="currentHousehold"><li>None</li></ul></section>
+                <hr />
             </section>
             <section id="game"></section>
         </article>
@@ -29,7 +30,8 @@
     <footer>
         &copy; Kiba's Kingdom 🏰 <span id="year"></span>
     </footer>
-    <script type="module" src="./index.js">
+    <script type="module" src="./index.js"></script>
+    <script>
         document.getElementById('year').textContent = new Date().getFullYear()
     </script>
 </body>
