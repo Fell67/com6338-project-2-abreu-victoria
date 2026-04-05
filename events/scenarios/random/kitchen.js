@@ -37,13 +37,13 @@ export default {
                         options: [],
                         nextStep: "END"
                     }
-                },
-                {
-                    prompt: "NAME sees you and REACTION. They tell you No! You drop the food and curl up on the couch. Hopefully they will forgive you soon.",
-                    options: [],
-                    nextStep: "END"
                 }
             ]
+        },
+        {
+            prompt: "NAME sees you and REACTION. They tell you No! You drop the food and curl up on the couch. Hopefully they will forgive you soon.",
+            options: [],
+            nextStep: "END"
         }
     ]
 }

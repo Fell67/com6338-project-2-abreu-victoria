@@ -39,17 +39,38 @@ export class Person {
     _friendship = 10
     // Applies the multiplier of the user to the event point value and returns it
     _applyEventMultiplier(eventPoints) {
-        console.log("apply event multiplier: ", eventPoints)
+        const multiplierValues = this._EVENT_MULTIPLIER[this._difficulty]
+        if (eventPoints < 0) {
+            return Number(multiplierValues.negative) * Number(eventPoints)
+        } else {
+            return Number(multiplierValues.positive) * Number(eventPoints)
+        }
     }
     // Returns the response based on the point value given
     // (assumes it is getting the point value that will be applied to the person)
     _getResponse(friendshipPoints) {
-        console.log("Get response: ", friendshipPoints)
+        friendshipPoints = Number(friendshipPoints)
+
+        if (friendshipPoints >= 10) {
+            return this._RESPONSES.greaterOrEqualTo10
+        } else if (friendshipPoints < 10 && friendshipPoints >= 5) {
+            return this._RESPONSES.lessThan10GreaterOrEqualTo5
+        } else if (friendshipPoints < 5 && friendshipPoints >= 0) {
+            return this._RESPONSES.lessThan5GreaterOrEqualTo0
+        } else if (friendshipPoints < 0 && friendshipPoints >= -5) {
+            return this._RESPONSES.lessThan0GreaterOrEqualToNegative5
+        } else if (friendshipPoints < -5 && friendshipPoints >= -10) {
+            return this._RESPONSES.lessThanNegative5GreaterOrEqualToNegative10
+        } else {
+            return this._RESPONSES.lessThanNegative10
+        }
     }
-    // Takes the point value and updates the friendship.
+    // Takes the point value and updates the friendship. Makes sure the new value is between 0 and _MAX_FRIENDSHIP
     // (assumes it is getting the point value that will be applied to the person)
     _updateFriendship(friendshipPoints) {
-        console.log("Update friendship: ", friendshipPoints)
+        friendshipPoints = Number(friendshipPoints)
+        this._friendship = Math.min(Math.max(0, this._friendship + friendshipPoints), this._MAX_FRIENDSHIP)
+        console.log("VA name: " + this.name + " is now at: " + this._friendship + " friendship was updated by: " + friendshipPoints)
     }
     // Comes up with a random name to assign the human and returns it.
     async _getRandomName() {
@@ -72,33 +93,33 @@ export class Person {
             console.error(`${errorObj.status}: ${errorObj.statusText}`)
             return 'Victoria'
         }
-        console.log("Get random name")
-        return 'Victoria'
     }
     name = ''
     // If at max friendship return true else return false
     isAtMaxFriendship() {
-        console.log("is at max friendship?")
+        console.log("VA is at max friendship?")
     }
     // returns the percent of friendship that Kiba is at with the person
     getFriendshipPercent() {
-        console.log("get friendship %")
+        return (this._friendship/this._MAX_FRIENDSHIP) * 100
     }
     // Sees if friendship is at or below 0.
     // Returns true if rejected and false if not.
     isRejected() {
-        console.log("is rejected?")
+        console.log("VA is rejected?")
     }
     // Processes the users response to the event
     processEvent(eventPoints) {
-        console.log("Process Event: ", eventPoints)
-        // Takes the points from the event, applies the multiplier to it using _appyEventMultiplier(eventPoints)
+        // Takes the points from the event, applies the multiplier to it using _applyEventMultiplier(eventPoints)
+        const friendshipPoints = this._applyEventMultiplier(eventPoints)
         // Updates the persons friendship using _updateFriendship(friendshipPoints)
+        this._updateFriendship(friendshipPoints)
         // Gets the persons response with _getResponse(friendshipPoints) then returns the response
+        return this._getResponse(friendshipPoints)
     }
     // Gets the response for the amount of rejections given and changes NAME to the name of the person then returns it.
     getRejectionResponse(numberOfRejections) {
-        console.log("get rejection response: ", numberOfRejections)
+        console.log("VA get rejection response: ", numberOfRejections)
     }
     // Creates the person. Sets the name and difficulty.
     // If it’s the main human then the difficulty is easy.
@@ -112,5 +133,4 @@ export class Person {
 
         return this
     }
-
 }

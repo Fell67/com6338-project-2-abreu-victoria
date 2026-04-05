@@ -21,7 +21,7 @@ export default {
             ]
         },
         {
-            prompt: "You explore the house and NUMBER_OF_HUMANS. You decide to go back to the first human and see what they are doing.",
+            prompt: "You explore the house and NUMBER_OF_OTHER_HUMANS other humans called HOUSEHOLD_NAMES. You decide to go back to the first human and see what they are doing.",
             options: []
         }
     ]

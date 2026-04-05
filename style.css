@@ -60,6 +60,19 @@ button {
   text-align: right;
 }
 
+.section-hidden {
+  display: none;
+}
+
+.section-step_options {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-step_options {
+  margin: 1em 0;
+}
+
 @media (max-width: 480px) {
   body {
     font-size: 1rem;
