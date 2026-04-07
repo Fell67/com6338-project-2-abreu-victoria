@@ -31,12 +31,12 @@ export class Events {
   }
   // Format the text for the given step so it is ready to be displayed
   _formatText(text, reaction) {
-    const reservedWords = ['NAME', 'REACTION', "MAIN_HUMAN", "NUMBER_OF_OTHER_HUMANS", "HOUSEHOLD_NAMES"]
+    const reservedWords = ["<NAME>", '<REACTION>', "<MAIN_HUMAN>", "<NUMBER_OF_OTHER_HUMANS>", "<HOUSEHOLD_NAMES>"]
 
     for (const reservedWord of reservedWords) {
       switch (reservedWord) {
-        case 'NAME':
-          // If this is the main house or new house event the NAME field is replaced with the name of the first person in the array
+        case '<NAME>':
+          // If this is the main house or new house event the <NAME> field is replaced with the name of the first person in the array
           // Else its replaced with person
           if (this._currentEvent.type === 'Main House' || this._currentEvent.type === 'New House') {
             text = text.replaceAll(reservedWord, this._currentEvent.household[0].name)
@@ -44,22 +44,30 @@ export class Events {
             text = text.replaceAll(reservedWord, this._currentEvent.person.name)
           }
           break
-        case 'REACTION':
+        case '<REACTION>':
           text = text.replaceAll(reservedWord, reaction)
           break
-        case 'MAIN_HUMAN':
+        case '<MAIN_HUMAN>':
           text = text.replaceAll(reservedWord, this._currentEvent.mainHuman.name)
           break
-        case 'NUMBER_OF_OTHER_HUMANS':
+        case '<NUMBER_OF_OTHER_HUMANS>':
           if (this._currentEvent.household) {
             text = text.replaceAll(reservedWord, this._currentEvent.household.length - 1)
           }
           break
-        case 'HOUSEHOLD_NAMES':
+        case '<HOUSEHOLD_NAMES>':
           if (this._currentEvent.household) {
-            text = text.replaceAll(reservedWord, this._currentEvent.household.slice(1).forEach(person => {
-              return person.name
-            }))
+            text = text.replaceAll(reservedWord, this._currentEvent.household.slice(1).map((person, index) => {
+              const isSecondToLastOne = (index === this._currentEvent.household.slice(1).length - 2)
+              const isLastOne = (index === this._currentEvent.household.slice(1).length - 1)
+              if (isLastOne) {
+                return `${person.name}`
+              } else if (isSecondToLastOne) {
+                return `${person.name}, and`
+              } else {
+                return `${person.name},`
+              }
+            }).join(' '))
           }
           break
       }
@@ -70,8 +78,10 @@ export class Events {
   // Determines if the person can do the event
   _canDoEvent(person, event) {
     if (event.if) {
-      if (event.if.key === "friendship" && Number(person.getFriendshipPercent()) < Number(event.if.greaterThan)) {
-        return false
+      if (event.if.key === "friendship") {
+        if (Number(person.getFriendshipPercent()) < Number(event.if.greaterThan)) {
+          return false
+        }
       } else {
         console.error('ERROR: Unknown event key in event conditional: ', event.if.key)
       }

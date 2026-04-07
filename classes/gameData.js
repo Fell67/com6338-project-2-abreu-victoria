@@ -188,6 +188,7 @@ export class GameData {
             this._GAME_SCREEN.replaceChildren()
             
             // Determine next screen to show
+            this._endDay()
         }.bind(this))
 
         const nextBtnContainerElement = document.createElement('section')
@@ -197,8 +198,37 @@ export class GameData {
         this._GAME_SCREEN.appendChild(nextBtnContainerElement)
     }
     // Loads new household conquered screen to user
-    _loadConquered() {
-        console.log("VA Load conquered screen")
+    _loadHouseholdAdded() {
+        const householdAddedFlavorText = "🎉A new household has been added to the kingdom!🎉"
+        
+        // Create element for the flavor text and scores
+        const householdAddedFlavorTextElement = document.createElement('h2')
+        householdAddedFlavorTextElement.textContent = householdAddedFlavorText
+
+        this._GAME_SCREEN.appendChild(householdAddedFlavorTextElement)
+
+        const householdAddedCountElement = document.createElement('p')
+        householdAddedCountElement.textContent = `The total number of households in the kingdom is now: ${this._numberOfHouseholdsAdded}`
+        this._GAME_SCREEN.appendChild(householdAddedCountElement)
+
+        // Create elements for next button
+        const nextBtnElement = document.createElement('button')
+        nextBtnElement.textContent = 'Next'
+        nextBtnElement.addEventListener('click', function (e) {
+            e.stopPropagation()
+            
+            // Clear screen
+            this._GAME_SCREEN.replaceChildren()
+            
+            // Determine next screen to show
+            this._endDay()
+        }.bind(this))
+
+        const nextBtnContainerElement = document.createElement('section')
+        nextBtnContainerElement.classList.add('section-text_right')
+        nextBtnContainerElement.appendChild(nextBtnElement)
+
+        this._GAME_SCREEN.appendChild(nextBtnContainerElement)
     }
     // Loads rejected screen to user
     _loadRejected() {
@@ -212,21 +242,31 @@ export class GameData {
     _updateScoreboard() {
         console.log("VA Update scoreboard")
     }
-    // Updates the current household
-    _updateCurrentHousehold() {
-        console.log("VA Update current household")
-    }
     // Determines if Kiba is going to a new household today. Returns true if yes and false if not.
     _goingToNewHousehold() {
-        console.log("VA Going to new household?")
+        for (const person of this._currentHousehold) {
+            if (person.getFriendshipPercent() !== 100) {
+                return false
+            }
+        }
+        return true
     }
     // Determines if Kiba is returned to the shelter
     _isReturnedToShelter() {
-        console.log("VA Is returned")
+        if (this._REJECTION_CAP === this._numberOfRejections) {
+            return true
+        }
+
+        return false
     }
     // Determines if Kiba is rejected from household
     _isRejectedFromHousehold() {
-        console.log("VA is rejected?")
+        for (const person of this._currentHousehold) {
+            if (person.getFriendshipPercent() === 0) {
+                return true
+            }
+        }
+        return false
     }
     // Creates a new household
     async _createNewHousehold(isFirstHousehold) {
@@ -260,19 +300,39 @@ export class GameData {
     }
     // End the day and start the next one
     _endDay() {
-        // Determine if Kiba won over a new household
-        
-        // Determines if Kiba is rejected and if so if he is returned to the shelter then loads rejected and returned screens as needed
-        if (this._isRejectedFromHousehold()) {
-            this._loadRejected()
-            if (this._isReturnedToShelter()) {
-                this._loadReturned()
+        let showingOtherScreen = false
+        if (this._currentHousehold.length > 0) {
+            // Determine if Kiba won over a new household
+            if (this._goingToNewHousehold()) {
+                this._currentHousehold = []
+                this._numberOfHouseholdsAdded++
+                showingOtherScreen = true
+                this._loadHouseholdAdded()
+            }
+            
+            // Determines if Kiba is rejected then loads the rejected screen as needed
+            if (this._isRejectedFromHousehold()) {
+                this._currentHousehold = []
+                this._numberOfRejections++
+                showingOtherScreen = true
+                this._loadRejected()
             }
         }
 
-        // Updates the scoreboard then starts a new day
+        // Determines if Kiba is returned to the shelter then loads the returned screen as needed
+        if (this._isReturnedToShelter()) {
+            showingOtherScreen = true
+            this._loadReturned()
+        }
+
+        // Updates the scoreboard, save current status to local storage, then starts a new day
         this._updateScoreboard()
-        this._startDay()
+        // this._saveToLocalStorage() <- loading saved data is currently not working need to create person
+        
+        // We only want to start the next day if no other screens were shown
+        if (!showingOtherScreen) {
+            this._startDay()
+        }
     }
     // Loads in the existing game if it exists (_loadFromLocalStorage()) and loads in the events for the game (loadEvents())
     gameStartup() {

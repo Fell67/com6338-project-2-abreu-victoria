@@ -3,7 +3,7 @@ export default {
     person: undefined,
     steps: [
         {
-            prompt: "NAME picks up one of your toys and throws it.",
+            prompt: "<NAME> picks up one of your toys and throws it.",
             options: [
                 {
                     text: "Bark at them. HOW DARE THEY DO THAT! Then go get your toy and bring it to your bed where you can protect it.",
@@ -18,7 +18,7 @@ export default {
             ]
         },
         {
-            prompt: "NAME REACTION and continues to play with you for a few hours.",
+            prompt: "<NAME> <REACTION> and continues to play with you for a few hours.",
             options: []
         }
     ]

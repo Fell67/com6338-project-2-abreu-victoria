@@ -3,7 +3,7 @@ export default {
     person: undefined,
     steps: [
         {
-            prompt: "NAME goes to the couch and turns on a box that shows images and makes sounds.",
+            prompt: "<NAME> goes to the couch and turns on a box that shows images and makes sounds.",
             options: [
                 {
                     text: "It's too loud! Get up and leave the room.",
@@ -18,7 +18,7 @@ export default {
             ]
         },
         {
-            prompt: "NAME REACTION and they start petting you. You both cuddle until the box turns off.",
+            prompt: "<NAME> <REACTION> and they start petting you. You both cuddle until the box turns off.",
             options: []
         }
     ]

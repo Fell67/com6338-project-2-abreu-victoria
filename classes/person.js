@@ -28,9 +28,9 @@ export class Person {
     // These are the responses as more household's reject Kiba
     // NAME is the name of the mainHuman. Will be replaced with the mainHuman’s name in another function.
     _REJECTION_RESPONSES = {
-        1: "NAME is starting to feel lonely…",
-        2: "NAME really wishes that they could hangout with their friends and family more. I should be a good pup and try and make it work.",
-        3: "NAME looks like they are on their last legs. They decide that they were not ready yet to have a dog and return you to the shelter."
+        1: "<NAME> is starting to feel lonely…",
+        2: "<NAME> really wishes that they could hangout with their friends and family more. I should be a good pup and try and make it work.",
+        3: "<NAME> looks like they are on their last legs. They decide that they were not ready yet to have a dog and return you to the shelter."
     }
     // How hard it will be to gain the friendship of the human. Will be randomly picked when the person is created.
     _difficulty = ''
@@ -95,10 +95,6 @@ export class Person {
         }
     }
     name = ''
-    // If at max friendship return true else return false
-    isAtMaxFriendship() {
-        console.log("VA is at max friendship?")
-    }
     // returns the percent of friendship that Kiba is at with the person
     getFriendshipPercent() {
         return (this._friendship/this._MAX_FRIENDSHIP) * 100
@@ -117,7 +113,7 @@ export class Person {
         // Gets the persons response with _getResponse(friendshipPoints) then returns the response
         return this._getResponse(friendshipPoints)
     }
-    // Gets the response for the amount of rejections given and changes NAME to the name of the person then returns it.
+    // Gets the response for the amount of rejections given and changes <NAME> to the name of the person then returns it.
     getRejectionResponse(numberOfRejections) {
         console.log("VA get rejection response: ", numberOfRejections)
     }

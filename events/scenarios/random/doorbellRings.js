@@ -18,7 +18,7 @@ export default {
             ]
         },
         {
-            prompt: "NAME REACTION but they go and answer the door. Looks like someone decided to present the kingdom with a gift! It's wrapped in a brown box.",
+            prompt: "<NAME> <REACTION> but they go and answer the door. Looks like someone decided to present the kingdom with a gift! It's wrapped in a brown box.",
             options: [
                 {
                     text: "TEAR THE BOX APART! I want to see what is inside the box and the faster the better.",
@@ -33,7 +33,7 @@ export default {
             ]
         },
         {
-            prompt: "NAME REACTION. They get something sharp and open the box. Seems like someone decided to present you with a new toy. Looks like fun!",
+            prompt: "<NAME> <REACTION>. They get something sharp and open the box. Seems like someone decided to present you with a new toy. Looks like fun!",
             options: []
         }
     ]
