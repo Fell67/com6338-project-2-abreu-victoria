@@ -1,6 +1,6 @@
 export class Person {
     _MAX_FRIENDSHIP = 100 // This is the max friendship that you can achieve
-    _DIFFICULTY_LEVELS = ["easy", "medium", 'hard']
+    _DIFFICULTY_LEVELS = [{ level: "easy", reaction: "happy" }, { level: "medium", reaction: "content" }, { level: "hard", reaction: "annoyed" }]
     // Contains the responses based on points gained or loosed 
     _RESPONSES = {
         greaterOrEqualTo10: "laughs and looks really happy",
@@ -78,7 +78,7 @@ export class Person {
         try {
             const response = await fetch(randomNameURL)
             if (response.status === 200) {
-                const { results: [ { name: { first } } ] } = await response.json()
+                const { results: [{ name: { first } }] } = await response.json()
                 return first
 
             } else {
@@ -97,12 +97,7 @@ export class Person {
     name = ''
     // returns the percent of friendship that Kiba is at with the person
     getFriendshipPercent() {
-        return (this._friendship/this._MAX_FRIENDSHIP) * 100
-    }
-    // Sees if friendship is at or below 0.
-    // Returns true if rejected and false if not.
-    isRejected() {
-        console.log("VA is rejected?")
+        return (this._friendship / this._MAX_FRIENDSHIP) * 100
     }
     // Processes the users response to the event
     processEvent(eventPoints) {
@@ -117,6 +112,14 @@ export class Person {
     getRejectionResponse(numberOfRejections) {
         console.log("VA get rejection response: ", numberOfRejections)
     }
+    // Gets init reaction of Kiba (used in the new household event)
+    getInitReaction() {
+        for ( const difficulty of this._DIFFICULTY_LEVELS) {
+            if (difficulty.level === this._difficulty) {
+                return difficulty.reaction
+            }
+        }
+    }
     // Creates the person. Sets the name and difficulty.
     // If it’s the main human then the difficulty is easy.
     async create(isMainHuman) {
@@ -124,7 +127,7 @@ export class Person {
         if (isMainHuman) {
             this._difficulty = 'easy'
         } else {
-            this._difficulty = this._DIFFICULTY_LEVELS[Math.floor(Math.random() * this._DIFFICULTY_LEVELS.length)]
+            this._difficulty = this._DIFFICULTY_LEVELS[Math.floor(Math.random() * this._DIFFICULTY_LEVELS.length)].level
         }
 
         return this

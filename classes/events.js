@@ -13,7 +13,7 @@ export class Events {
   _currentEvent
 
   // Figures out with prompt to use and returns it
-  _getPrompt(prompt, person) {
+  _getPrompt(prompt, person, household) {
     if (prompt.if) {
       if (prompt.if.key === "friendship") {
         console.log('VA Number(person.getFriendshipPercent()): ', Number(person.getFriendshipPercent()))
@@ -22,8 +22,14 @@ export class Events {
         } else {
           return prompt.else.prompt
         }
+      } else if (prompt.if.key === "household") {
+        if (household.length > Number(prompt.if.greaterThan)) {
+          return prompt.if.prompt
+        } else {
+          return prompt.else.prompt
+        }
       } else {
-        console.error('ERROR: Unknown event key in event conditional: ', event.if.key)
+        console.error("ERROR: Unknown event key in event conditional: ", prompt.if.key)
       }
     }
 
@@ -31,7 +37,7 @@ export class Events {
   }
   // Format the text for the given step so it is ready to be displayed
   _formatText(text, reaction) {
-    const reservedWords = ["<NAME>", '<REACTION>', "<MAIN_HUMAN>", "<NUMBER_OF_OTHER_HUMANS>", "<HOUSEHOLD_NAMES>"]
+    const reservedWords = ["<NAME>", "<REACTION>", "<REACTION_TO_KIBA>", "<MAIN_HUMAN>", "<NUMBER_OF_OTHER_HUMANS>", "<HOUSEHOLD_NAMES>"]
 
     for (const reservedWord of reservedWords) {
       switch (reservedWord) {
@@ -46,6 +52,11 @@ export class Events {
           break
         case '<REACTION>':
           text = text.replaceAll(reservedWord, reaction)
+          break
+        case "<REACTION_TO_KIBA>":
+          if (this._currentEvent.household) {
+            text = text.replaceAll(reservedWord, this._currentEvent.household[0].getInitReaction())
+          }
           break
         case '<MAIN_HUMAN>':
           text = text.replaceAll(reservedWord, this._currentEvent.mainHuman.name)
@@ -185,7 +196,7 @@ export class Events {
     }
 
     // Format the prompt and the options
-    nextStep.prompt = this._formatText(this._getPrompt(nextStep.prompt, this._currentEvent.person), personsReaction)
+    nextStep.prompt = this._formatText(this._getPrompt(nextStep.prompt, this._currentEvent.person, this._currentEvent.household), personsReaction)
     for (const option of nextStep.options) {
       option.text = this._formatText(option.text, personsReaction)
     }
