@@ -242,6 +242,12 @@ export class GameData {
         householdAddedCountElement.textContent = `The number of households that have refused to join the kingdom in a row is now: ${this._numberOfRejections}. Better be more careful next time...`
         this._GAME_SCREEN.appendChild(householdAddedCountElement)
 
+        if (this._isReturnedToShelter()) {
+            const householdAddedCountElement = document.createElement('h2')
+            householdAddedCountElement.textContent = `GAME OVER`
+            this._GAME_SCREEN.appendChild(householdAddedCountElement)
+        }
+
         // Create elements for next button
         const nextBtnElement = document.createElement('button')
         nextBtnElement.textContent = 'Next'
@@ -257,8 +263,8 @@ export class GameData {
                 this._currentHousehold = []
                 this._numberOfHouseholdsAdded = 0
                 this._numberOfRejections = 0
-                // Save current status to local storage, then starts a new day
-                this._saveToLocalStorage()
+                // remove current status to local storage, then starts a new day
+                localStorage.removeItem(this._LOCAL_STORAGE_KEY)
                 this._loadIntro()
             } else {
                 this._endDay()
@@ -325,7 +331,8 @@ export class GameData {
         // Gets the rest of the events for the day
         this._eventsLeftInDay = [...this._eventsLeftInDay, ...this._events.getEventsForTheDay(this._currentHousehold)]
 
-        this._loadEvents(this._eventsLeftInDay[0])
+        this._loadRejected()
+        // this._loadEvents(this._eventsLeftInDay[0])
     }
     // End the day and start the next one
     _endDay() {
