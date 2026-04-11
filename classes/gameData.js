@@ -288,7 +288,7 @@ export class GameData {
     }
     // Determines if Kiba is returned to the shelter
     _isReturnedToShelter() {
-        if (this._REJECTION_CAP <= this._numberOfRejections) {
+        if (this._REJECTION_CAP <= this._numberOfRejections || this.numberOfHouseholdsAdded <= 0) {
             return true
         }
 
@@ -331,8 +331,7 @@ export class GameData {
         // Gets the rest of the events for the day
         this._eventsLeftInDay = [...this._eventsLeftInDay, ...this._events.getEventsForTheDay(this._currentHousehold)]
 
-        this._loadRejected()
-        // this._loadEvents(this._eventsLeftInDay[0])
+        this._loadEvents(this._eventsLeftInDay[0])
     }
     // End the day and start the next one
     _endDay() {
