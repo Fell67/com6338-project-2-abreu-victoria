@@ -16,7 +16,6 @@ export class Events {
   _getPrompt(prompt, person, household) {
     if (prompt.if) {
       if (prompt.if.key === "friendship") {
-        console.log('VA Number(person.getFriendshipPercent()): ', Number(person.getFriendshipPercent()))
         if (Number(person.getFriendshipPercent()) > Number(prompt.if.greaterThan)) {
           return prompt.if.prompt
         } else {
@@ -177,7 +176,7 @@ export class Events {
   // Finds the next step, formats it, returns it
   getNextStep(response, personsReaction) {
     let nextStep
-    // If there is no response from the user go to the next step
+    // If there is no response and its not the end of the event go to the next step
     // else figure out what step is next
     if (!response && this._currentEvent.steps.length > 0) {
       // Get the next step and format the prompt
@@ -186,9 +185,9 @@ export class Events {
       // If there is an intermediate step run that
       // else if the next step is continue then go to the next step
       // else end the event
-      if (response?.nextStep && typeof response.nextStep === 'object') {
+       if (response?.nextStep && typeof response.nextStep === 'object') {
         nextStep = response.nextStep
-      } else if (response?.nextStep.toLowerCase() === 'continue' && this._currentEvent.steps.length > 0) {
+      } else if (response?.nextStep?.toLowerCase() === 'continue' && this._currentEvent.steps.length > 0) {
         nextStep = this._currentEvent.steps.shift()
       } else {
         return

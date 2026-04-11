@@ -25,7 +25,7 @@ export default {
                 if: {
                     key: "household",
                     greaterThan: 1,
-                    prompt: "You explore the house and notice <NUMBER_OF_OTHER_HUMANS> other humans called <HOUSEHOLD_NAMES>. You decide to go back to the first human and see what they are doing.",
+                    prompt: "You explore the house and notice <NUMBER_OF_OTHER_HUMANS> other human(s) called <HOUSEHOLD_NAMES>. You decide to go back to the first human and see what they are doing.",
                 },
                 else: {
                     prompt: "You explored the house and don't see anyone else. You decide to go back to the human and see what they are doing."

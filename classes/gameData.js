@@ -13,7 +13,6 @@ export class GameData {
     _currentHousehold = [] // The people in the current household
     // Saves game data to local storage. Happens at end of day.
     _saveToLocalStorage() {
-        console.log("VA Save Game data")
         let gameData = {
             numberOfRejections: this._numberOfRejections,
             mainHuman: this._mainHuman,
@@ -26,16 +25,18 @@ export class GameData {
     }
     // Loads in game data from local storage if it exists
     _loadFromLocalStorage() {
-        console.log("VA Load from storage")
         let gameData = localStorage.getItem(this._LOCAL_STORAGE_KEY)
         if (gameData) {
             gameData = JSON.parse(gameData)
-            console.debug("found game data: ", gameData)
             this._numberOfRejections = Number(gameData.numberOfRejections)
-            this._mainHuman = gameData.mainHuman
+            this._mainHuman = new Person().createFromLocalStorage(gameData.mainHuman)
             this._eventsLeftInDay = gameData.eventsLeftInDay
             this._numberOfHouseholdsAdded = Number(gameData.numberOfHouseholdsAdded)
-            this._currentHousehold = gameData.currentHousehold
+            
+            this._currentHousehold = []
+            for (const person of gameData.currentHousehold) {
+                this._currentHousehold.push(new Person().createFromLocalStorage(person))
+            }
         }
     }
     // Toggle an element's visibility
@@ -105,10 +106,10 @@ export class GameData {
 
         // Create wrapper element for the options
         const optionsContainerElement = document.createElement('section')
+        optionsContainerElement.classList.add('section-step_options')
 
         // Create elements for each option
         if (step.options.length > 0) {
-            optionsContainerElement.classList.add('section-step_options')
             for (const option of step.options) {
                 let optionsBtnElement = document.createElement('button')
                 optionsBtnElement.textContent = option.text
@@ -124,15 +125,14 @@ export class GameData {
                 optionsContainerElement.appendChild(optionsBtnElement)
             }
         } else {
-            optionsContainerElement.classList.add('section-text_right')
-
             const nextBtnElement = document.createElement('button')
             nextBtnElement.textContent = 'Next'
+            nextBtnElement.classList.add('button-step_options')
             nextBtnElement.addEventListener('click', function (e) {
                 e.stopPropagation()
                 // Clear screen and play game
                 this._GAME_SCREEN.replaceChildren()
-                this._loadStep(this._events.getNextStep())
+                this._loadStep(this._events.getNextStep('END'))
             }.bind(this))
 
             optionsContainerElement.appendChild(nextBtnElement)
@@ -143,10 +143,8 @@ export class GameData {
     }
     // Loads the current event onto the screen
     _loadEvents(event) {
-        console.log("VA do event: ", event)
         // If there are not events to load return
         if (!event) {
-            console.log("VA no more events")
             this._loadEndOfDay()
 
             return
@@ -232,15 +230,46 @@ export class GameData {
     }
     // Loads rejected screen to user
     _loadRejected() {
-        console.log("VA Load Rejected screen")
-    }
-    // Loads the returned screen to the user
-    _loadReturned() {
-        console.log("VA load the returned screen")
-    }
-    // Updates the scoreboard
-    _updateScoreboard() {
-        console.log("VA Update scoreboard")
+        const householdAddedFlavorText = `You have been rejected from the household. ${this._mainHuman.name} ${this._mainHuman.getRejectionResponse(this._numberOfRejections)}`
+        
+        // Create element for the flavor text and scores
+        const householdAddedFlavorTextElement = document.createElement('h2')
+        householdAddedFlavorTextElement.textContent = householdAddedFlavorText
+
+        this._GAME_SCREEN.appendChild(householdAddedFlavorTextElement)
+
+        const householdAddedCountElement = document.createElement('p')
+        householdAddedCountElement.textContent = `The number of households that have refused to join the kingdom in a row is now: ${this._numberOfRejections}. Better be more careful next time...`
+        this._GAME_SCREEN.appendChild(householdAddedCountElement)
+
+        // Create elements for next button
+        const nextBtnElement = document.createElement('button')
+        nextBtnElement.textContent = 'Next'
+        nextBtnElement.addEventListener('click', function (e) {
+            e.stopPropagation()
+            
+            // Clear screen
+            this._GAME_SCREEN.replaceChildren()
+            
+            // Determines if Kiba is returned to the shelter then restart the game else load the next day
+            if (this._isReturnedToShelter()) {
+                this._mainHuman = undefined
+                this._currentHousehold = []
+                this._numberOfHouseholdsAdded = 0
+                this._numberOfRejections = 0
+                // Save current status to local storage, then starts a new day
+                this._saveToLocalStorage()
+                this._loadIntro()
+            } else {
+                this._endDay()
+            }
+        }.bind(this))
+
+        const nextBtnContainerElement = document.createElement('section')
+        nextBtnContainerElement.classList.add('section-text_right')
+        nextBtnContainerElement.appendChild(nextBtnElement)
+
+        this._GAME_SCREEN.appendChild(nextBtnContainerElement)
     }
     // Determines if Kiba is going to a new household today. Returns true if yes and false if not.
     _goingToNewHousehold() {
@@ -253,7 +282,7 @@ export class GameData {
     }
     // Determines if Kiba is returned to the shelter
     _isReturnedToShelter() {
-        if (this._REJECTION_CAP === this._numberOfRejections) {
+        if (this._REJECTION_CAP <= this._numberOfRejections) {
             return true
         }
 
@@ -306,6 +335,7 @@ export class GameData {
             if (this._goingToNewHousehold()) {
                 this._currentHousehold = []
                 this._numberOfHouseholdsAdded++
+                this._numberOfRejections = 0
                 showingOtherScreen = true
                 this._loadHouseholdAdded()
             }
@@ -319,15 +349,8 @@ export class GameData {
             }
         }
 
-        // Determines if Kiba is returned to the shelter then loads the returned screen as needed
-        if (this._isReturnedToShelter()) {
-            showingOtherScreen = true
-            this._loadReturned()
-        }
-
-        // Updates the scoreboard, save current status to local storage, then starts a new day
-        this._updateScoreboard()
-        // this._saveToLocalStorage() <- loading saved data is currently not working need to create person
+        // Save current status to local storage, then starts a new day
+        this._saveToLocalStorage()
         
         // We only want to start the next day if no other screens were shown
         if (!showingOtherScreen) {
@@ -339,6 +362,10 @@ export class GameData {
         this._loadFromLocalStorage()
         this._events.loadEvents()
         // If there is no main human then load the intro screen
-        this._loadIntro()
+        if(!this._mainHuman) {
+            this._loadIntro()
+        } else {
+            this._startDay()
+        }
     }
 }

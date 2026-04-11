@@ -3,7 +3,7 @@ export default {
     household: [],
     steps: [
         {
-            prompt: 'A human opens the door for you and says "Welcome to you new home! You are such a cute puppy. I am going to call you Kiba. My name is <NAME>.',
+            prompt: 'A human opens the door for you and says "Welcome to you new home! You are such a cute puppy. I am going to call you Kiba. My name is <NAME>."',
             options: [
                 {
                     text: "Bark happily and jump up and down.",

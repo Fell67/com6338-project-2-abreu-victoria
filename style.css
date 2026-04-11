@@ -19,7 +19,7 @@ body {
 
 header, footer {
   background-color: var(--primary-color);
-  padding: 1em .5em;
+  padding: .25em .5em;
   color: var(--text-color);
 }
 

@@ -28,9 +28,9 @@ export class Person {
     // These are the responses as more household's reject Kiba
     // NAME is the name of the mainHuman. Will be replaced with the mainHuman’s name in another function.
     _REJECTION_RESPONSES = {
-        1: "<NAME> is starting to feel lonely…",
-        2: "<NAME> really wishes that they could hangout with their friends and family more. I should be a good pup and try and make it work.",
-        3: "<NAME> looks like they are on their last legs. They decide that they were not ready yet to have a dog and return you to the shelter."
+        1: "is starting to feel lonely…",
+        2: "really wishes that they could hangout with their friends and family more. I should be a good pup and try and make it work.",
+        3: "looks like they are on their last legs. They decide that they were not ready yet to have a dog and return you to the shelter."
     }
     // How hard it will be to gain the friendship of the human. Will be randomly picked when the person is created.
     _difficulty = ''
@@ -70,7 +70,6 @@ export class Person {
     _updateFriendship(friendshipPoints) {
         friendshipPoints = Number(friendshipPoints)
         this._friendship = Math.min(Math.max(0, this._friendship + friendshipPoints), this._MAX_FRIENDSHIP)
-        console.log("VA name: " + this.name + " is now at: " + this._friendship + " friendship was updated by: " + friendshipPoints)
     }
     // Comes up with a random name to assign the human and returns it.
     async _getRandomName() {
@@ -97,7 +96,7 @@ export class Person {
     name = ''
     // returns the percent of friendship that Kiba is at with the person
     getFriendshipPercent() {
-        return (this._friendship / this._MAX_FRIENDSHIP) * 100
+        return Math.trunc((this._friendship / this._MAX_FRIENDSHIP) * 100)
     }
     // Processes the users response to the event
     processEvent(eventPoints) {
@@ -110,7 +109,7 @@ export class Person {
     }
     // Gets the response for the amount of rejections given and changes <NAME> to the name of the person then returns it.
     getRejectionResponse(numberOfRejections) {
-        console.log("VA get rejection response: ", numberOfRejections)
+        return this._REJECTION_RESPONSES[numberOfRejections]
     }
     // Gets init reaction of Kiba (used in the new household event)
     getInitReaction() {
@@ -129,6 +128,14 @@ export class Person {
         } else {
             this._difficulty = this._DIFFICULTY_LEVELS[Math.floor(Math.random() * this._DIFFICULTY_LEVELS.length)].level
         }
+
+        return this
+    }
+    // Create a person from local storage
+    createFromLocalStorage(human) {
+        this.name = human.name
+        this._difficulty = human._difficulty
+        this._friendship = human._friendship
 
         return this
     }
