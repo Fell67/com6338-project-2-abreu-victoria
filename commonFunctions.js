@@ -12,3 +12,7 @@ export function copyObject(object) {
     
     return clonedObj
 }
+
+export function pickRandomArrayItem(array) {
+    return array[Math.floor(Math.random() * array.length)]
+}

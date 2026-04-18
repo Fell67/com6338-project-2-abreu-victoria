@@ -230,23 +230,23 @@ export class GameData {
     }
     // Loads rejected screen to user
     _loadRejected() {
-        const householdAddedFlavorText = `You have been rejected from the household. ${this._mainHuman.name} ${this._mainHuman.getRejectionResponse(this._numberOfRejections)}`
+        const fromOtherHouseFlavorText = `You have been rejected from the household. ${this._mainHuman.name} ${this._mainHuman.getRejectionResponse(this._numberOfRejections)}`
+        const fromMainHouseFlavorText = `${this._mainHuman.name} doesn't want you anymore and they have decided to return you to the shelter`
+
+        const householdRejectedFlavorText = (this._numberOfHouseholdsAdded <= 0 ? fromMainHouseFlavorText : fromOtherHouseFlavorText)
         
         // Create element for the flavor text and scores
-        const householdAddedFlavorTextElement = document.createElement('h2')
-        householdAddedFlavorTextElement.textContent = householdAddedFlavorText
+        const householdRejectedFlavorTextElement = document.createElement('h2')
+        householdRejectedFlavorTextElement.textContent = householdRejectedFlavorText
 
-        this._GAME_SCREEN.appendChild(householdAddedFlavorTextElement)
+        this._GAME_SCREEN.appendChild(householdRejectedFlavorTextElement)
 
-        const householdAddedCountElement = document.createElement('p')
-        householdAddedCountElement.textContent = `The number of households that have refused to join the kingdom in a row is now: ${this._numberOfRejections}. Better be more careful next time...`
-        this._GAME_SCREEN.appendChild(householdAddedCountElement)
-
-        if (this._isReturnedToShelter()) {
-            const householdAddedCountElement = document.createElement('h2')
-            householdAddedCountElement.textContent = `GAME OVER`
-            this._GAME_SCREEN.appendChild(householdAddedCountElement)
-        }
+        const householdRejectedCountElement = document.createElement('p')
+        const gameContinuesFlavorText = `The number of households that have refused to join the kingdom in a row is now: ${this._numberOfRejections}. Better be more careful next time...`
+        const gameOverFlavorText = `GAME OVER`
+        householdRejectedCountElement.textContent = (this._isReturnedToShelter() ? gameOverFlavorText : gameContinuesFlavorText)
+        householdRejectedCountElement.classList.add('section-text_center')
+        this._GAME_SCREEN.appendChild(householdRejectedCountElement)
 
         // Create elements for next button
         const nextBtnElement = document.createElement('button')
@@ -288,7 +288,7 @@ export class GameData {
     }
     // Determines if Kiba is returned to the shelter
     _isReturnedToShelter() {
-        if (this._REJECTION_CAP <= this._numberOfRejections || this.numberOfHouseholdsAdded <= 0) {
+        if (this._REJECTION_CAP <= this._numberOfRejections || this._numberOfHouseholdsAdded <= 0) {
             return true
         }
 

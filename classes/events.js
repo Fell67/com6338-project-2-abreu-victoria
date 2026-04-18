@@ -3,7 +3,7 @@ import firstHouseEvent from '../events/scenarios/newHouse/firstHouse.js'
 import newHouseEvent from '../events/scenarios/newHouse/newHouse.js'
 
 import { dailyEvents } from '../events/index.js'
-import { copyObject } from '../commonFunctions.js'
+import { copyObject, pickRandomArrayItem } from '../commonFunctions.js'
 
 export class Events {
   _DAILY_EVENTS = ["foodEvent", "walkEvent", "randomEvent", "walkEvent", "foodEvent"] // This array keeps track of what events happens when
@@ -99,14 +99,10 @@ export class Events {
 
     return true
   }
-  // picks a random person from the household to do the event
-  _pickRandomPerson(household) {
-    return household[Math.floor(Math.random() * household.length)]
-  }
   // gets the random event that a person can do
   // Returns an updated copy of the event that has the person assigned to it
   _pickRandomEvent(person, eventOptions) {
-    const randomEvent = copyObject(eventOptions[Math.floor(Math.random() * eventOptions.length)])
+    const randomEvent = copyObject(pickRandomArrayItem(eventOptions))
 
     // If the person can do the event then return it else pick another one
     if (this._canDoEvent(person, randomEvent)) {
@@ -139,11 +135,11 @@ export class Events {
     for (const eventType of this._DAILY_EVENTS) {
       let event
       if (eventType === "foodEvent") {
-        event = this._pickRandomEvent(this._pickRandomPerson(householdMembers), this._foodEvents)
+        event = this._pickRandomEvent(pickRandomArrayItem(householdMembers), this._foodEvents)
       } else if (eventType === "walkEvent") {
-        event = this._pickRandomEvent(this._pickRandomPerson(householdMembers), this._walkEvents)
+        event = this._pickRandomEvent(pickRandomArrayItem(householdMembers), this._walkEvents)
       } else if (eventType === "randomEvent") {
-        event = this._pickRandomEvent(this._pickRandomPerson(householdMembers), this._randomEvents)
+        event = this._pickRandomEvent(pickRandomArrayItem(householdMembers), this._randomEvents)
       } else {
         console.error("ERROR: Invalid event type ", eventType)
       }

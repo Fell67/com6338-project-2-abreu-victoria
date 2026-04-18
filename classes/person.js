@@ -1,3 +1,6 @@
+import { offlineNames } from "../offlineNames.js"
+import { pickRandomArrayItem } from "../commonFunctions.js"
+
 export class Person {
     _MAX_FRIENDSHIP = 100 // This is the max friendship that you can achieve
     _DIFFICULTY_LEVELS = [{ level: "easy", reaction: "happy" }, { level: "medium", reaction: "content" }, { level: "hard", reaction: "annoyed" }]
@@ -13,7 +16,7 @@ export class Person {
     // Based on the difficulty level of the person an event multiplier is added to the event points
     _EVENT_MULTIPLIER = {
         easy: {
-            positive: 2,
+            positive: 1.5,
             negative: .5
         },
         medium: {
@@ -22,7 +25,7 @@ export class Person {
         },
         hard: {
             positive: .5,
-            negative: 2
+            negative: 1.5
         }
     }
     // These are the responses as more household's reject Kiba
@@ -73,24 +76,29 @@ export class Person {
     }
     // Comes up with a random name to assign the human and returns it.
     async _getRandomName() {
-        const randomNameURL = 'https://randomuser.me/api/?nat=us'
-        try {
-            const response = await fetch(randomNameURL)
-            if (response.status === 200) {
-                const { results: [{ name: { first } }] } = await response.json()
-                return first
-
-            } else {
-                console.error(`${response.status}: ${response.statusText}`)
-                return 'Victoria'
+        const useAPI = false // The requirements for this assignment mean that I can't use the api so I am turning it off for now
+        if (useAPI) {
+            const randomNameURL = 'https://randomuser.me/api/?nat=us'
+            try {
+                const response = await fetch(randomNameURL)
+                if (response.status === 200) {
+                    const { results: [{ name: { first } }] } = await response.json()
+                    return first
+    
+                } else {
+                    console.error(`${response.status}: ${response.statusText}`)
+                    return pickRandomArrayItem(offlineNames)
+                }
+            } catch (error) {
+                const errorObj = {
+                    status: 'Unable to fetch the information',
+                    statusText: error
+                }
+                console.error(`${errorObj.status}: ${errorObj.statusText}`)
+                return pickRandomArrayItem(offlineNames)
             }
-        } catch (error) {
-            const errorObj = {
-                status: 'Unable to fetch the information',
-                statusText: error
-            }
-            console.error(`${errorObj.status}: ${errorObj.statusText}`)
-            return 'Victoria'
+        } else {
+            return pickRandomArrayItem(offlineNames)
         }
     }
     name = ''
@@ -126,7 +134,7 @@ export class Person {
         if (isMainHuman) {
             this._difficulty = 'easy'
         } else {
-            this._difficulty = this._DIFFICULTY_LEVELS[Math.floor(Math.random() * this._DIFFICULTY_LEVELS.length)].level
+            this._difficulty = pickRandomArrayItem(this._DIFFICULTY_LEVELS).level
         }
 
         return this

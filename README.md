@@ -71,14 +71,14 @@ At the end of the day the user get the following prompt: “That was a busy day 
 
 Based on the difficulty of the person there will be a multiplier added to the point values.
 - Easy: 
-    - positive events: x2
+    - positive events: x1.5
     - negative events: x.5 (each event is worth half as much)
 - Medium:
     - positive events: x1 (no extra points)
     - negative events: x1 (no extra points)
 - Hard: 
     - positive events: x.5 (each event is worth half as much)
-    - negative events: x2
+    - negative events: x1.5
 
 NOTE: The first person is always easy.
 

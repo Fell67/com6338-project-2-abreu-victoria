@@ -7,7 +7,7 @@ export default {
             options: [
                 {
                     text: "Yay, it is time for a walk. Run to the door then wait for your leash to be put on.",
-                    points: 5,
+                    points: 2,
                     nextStep: "CONTINUE"
                 },
                 {
